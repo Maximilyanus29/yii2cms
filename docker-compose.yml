@@ -1,0 +1,60 @@
+version: "3.9"
+
+networks:
+  backend:
+
+services:
+  nginx:
+    image: nginx
+    volumes:
+      - ./:/usr/share/nginx/html
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+
+  #  php:
+  #    build: ./docker/php
+  ##    image: php:fpm
+  #    volumes:
+  #      - ./app:/usr/share/nginx/html
+  #    ports:
+  #      - "9000:9000"
+
+  fpm:
+#    image: php:7.3-fpm
+    build: ./docker/php
+    working_dir: /usr/share/nginx/html
+    volumes:
+      - ./:/usr/share/nginx/html
+
+  # workspace:
+  #   image: php:fpm
+  #   volumes:
+  #     - ./workspace:/usr/share/nginx/html
+
+#  db:
+#    image: postgres
+#    restart: always
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      POSTGRES_PASSWORD: postgres
+#    volumes:
+#      - ./docker/db:/var/lib/postgresql/data
+#      - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+
+
+  db:
+    image: mariadb:10.6
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8082:80
+    environment:
+      - PMA_ARBITRARY=1
+
